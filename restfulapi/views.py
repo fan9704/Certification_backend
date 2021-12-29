@@ -4,7 +4,7 @@ import json
 # Create your views here.
 from django.http import HttpResponse
 from restfulapi import models
-from restfulapi.serializers import ProductSerializer,UserSerializer
+from restfulapi.serializers import CertificationSerializer,UserSerializer
 from rest_framework import viewsets,status,generics,mixins
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -20,47 +20,41 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_auth_token(sender, instance=None, created=False, **kwargs):
-    if created:
-        Token.objects.create(user=instance)
-for user in User.objects.all():
-    Token.objects.get_or_create(user=user)
+# @receiver(post_save, sender=settings.AUTH_USER_MODEL)
+# def create_auth_token(sender, instance=None, created=False, **kwargs):
+#     if created:
+#         Token.objects.create(user=instance)
+# for user in User.objects.all():
+#     Token.objects.get_or_create(user=user)
 
 @api_view(["GET","POST" ,"PUT","PATCH", "DELETE"])
-def product_api_view(request, pk=None):
+def certification_api_view(request, pk=None):
     if request.method == "GET":
         if pk==None:
-            product = models.Product.objects.all()
+            product = models.certification.objects.all()
         else:
             pk=int(pk)
-            product = models.Product.objects.get(pk=pk)
-        serializer = ProductSerializer(product)
+            product = models.certification.objects.get(pk=pk)
+        serializer = CertificationSerializer(product)
         return Response(serializer.data)
     elif request.method=="POST":
         print(request.data)
         name=request.data.get("name",'')
-        uploader=request.data.get("uploader",'')
-        status2=request.data.get("status",'')
-        description=request.data.get("description",'')
-        price=request.data.get("price",'')
-        if price=='':
-            price=0
-        if name !='' and uploader!=''and status2!='':
-            newProduct=models.Product.objects.create(name=name,uploader=uploader,status=status2,description=description,price=price)
-            if newProduct:
-                print("Create Product Success")
-                return Response({"status": "success","addproduct":True}, status=status.HTTP_200_OK)
+        if name !='' :
+            new=models.certification.objects.create(name=name)
+            if new:
+                print("Create Certification Success")
+                return Response({"status": "success","addcertification":True}, status=status.HTTP_200_OK)
             else:
-                return Response({"status": "fail","addproduct":False}, status=status.HTTP_204_NO_CONTENT)
+                return Response({"status": "fail","addcertification":False}, status=status.HTTP_204_NO_CONTENT)
         else:
-            return Response({"status": "fail","addproduct":False}, status=status.HTTP_204_NO_CONTENT)
+            return Response({"status": "fail","addcertification":False}, status=status.HTTP_204_NO_CONTENT)
 
     elif request.method == "PUT":
         print(request.data)
         id=request.data.get("id")
-        product = models.Product.objects.get(id)
-        serializer = ProductSerializer(product, data=request.data)
+        certification = models.certification.objects.get(id)
+        serializer = CertificationSerializer(certification, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -68,24 +62,24 @@ def product_api_view(request, pk=None):
     elif request.method=="PATCH":
         print(request.data)
         id=request.data.get("id")
-        product = models.Product.objects.get(id=id)
-        product.delete()
+        certification = models.certification.objects.get(id=id)
+        certification.delete()
         return Response({"delete":"success","id":id},status=status.HTTP_200_OK)
     elif request.method == "DELETE":
         print(request.data)
         id=request.data.get("id")
-        product = models.Product.objects.get(id)
-        product.delete()
+        certification = models.certification.objects.get(id)
+        certification.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
-class ProductViewSet(viewsets.ModelViewSet):
-    queryset = models.Product.objects.all()
-    serializer_class = ProductSerializer
+class CertificationViewSet(viewsets.ModelViewSet):
+    queryset = models.certification.objects.all()
+    serializer_class = CertificationSerializer
 
 
-class ProductListCreateAPIView(generics.ListCreateAPIView):
-    queryset = models.Product.objects.all().order_by("id")
-    serializer_class = ProductSerializer
+class CertificationListCreateAPIView(generics.ListCreateAPIView):
+    queryset = models.certification.objects.all().order_by("id")
+    serializer_class = CertificationSerializer
 
 
 

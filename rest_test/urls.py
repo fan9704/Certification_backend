@@ -24,12 +24,12 @@ from drf_yasg import openapi
 
 # ---product list
 router = DefaultRouter()
-router.register('', views.ProductViewSet)
-app_name = 'product list'
+router.register('', views.CertificationViewSet)
+app_name = 'Certification list'
 # ---
 schema_view = get_schema_view(
     openapi.Info(
-        title="Snippets API",
+        title="Certificatnio API",
         default_version='v1',
         description="Test description",
         terms_of_service="https://www.google.com/policies/terms/",
@@ -42,9 +42,8 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('api/admin/', admin.site.urls),
-    path("api/product/", views.product_api_view, name="product"),
-    path('api/products/', include(router.urls)),
-    # path('accounts/login/', views.loginAPI),
+    path("api/certification/", views.certification_api_view, name="certification"),
+    path('api/certification/', include(router.urls)),
     path('api/accounts/login/', views.loginAPI.as_view()),
     path('api/accounts/logout/', views.loginAPI.as_view()),
     path('api/accounts/register/', views.registerAPI.as_view()),
@@ -54,10 +53,7 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
-
-    
-    path('swagger(?P<format>\.json|\.yaml)', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    #path('(?P<format>\.json|\.yaml)', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    # path('index/',views.index),
 ]

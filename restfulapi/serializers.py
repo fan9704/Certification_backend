@@ -2,10 +2,10 @@ from rest_framework import serializers
 from restfulapi import models
 from django.contrib.auth import get_user_model
 from django.contrib import auth
-class ProductSerializer(serializers.ModelSerializer):
+class CertificationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Product
-        fields = ('id', 'name', 'uploader', 'status', 'description', 'view', 'price')
+        model = models.certification
+        fields = ('id', 'name')
         read_only_fields = ('id',)
 
 class UserSerializer(serializers.ModelSerializer):
