@@ -11,6 +11,8 @@ drf-yasg = "*"
 djangorestframework-simplejwt = "*"
 djangorestframework = "*"
 serializers = "*"
+coreapi = "*"
+pyyaml = "*"
 
 [dev-packages]
 
