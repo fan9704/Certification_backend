@@ -9,7 +9,9 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
+import datetime
+import os
+from dotenv import load_dotenv
 from pathlib import Path
 from corsheaders.defaults import default_headers
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -24,13 +26,14 @@ SECRET_KEY = '!s)eivvgl@u&+9eav%%py93b3)%vyid$!_ul0_%*c7aqmijrz7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+ROOT_DIR = (
+    Path(__file__).resolve().parent.parent
+)
 ALLOWED_HOSTS=['127.0.0.1',"*"]
 CORS_ALLOW_CREDENTIALS=True
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
-    "http://localhost:5500",
     "http://localhost:8080",
     "http://127.0.0.1:8080",
     "http://127.0.0.1:8000",
@@ -40,10 +43,19 @@ CORS_ALLOWED_HEADERS=('*')
 #     'token',
 #     'userid'
 # )
-
+# 依據環境變數來決定是否讀取 .env
+READ_DOT_ENV_FILE = os.getenv("DJANGO_READ_DOT_ENV_FILE",default=False)
+if READ_DOT_ENV_FILE:
+    # OS environment variables take precedence over variables from .env
+    load_dotenv()
+    os.getenv("DJANGO_READ_DOT_ENV_FILE",default=False)
 CORS_ORIGIN_ALLOW_METHODS=('*')
 # Application definition
-
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(
+        seconds=int(os.getenv("JWT_EXPIRATION_DELTA_SECONDS", default=300))),
+    'JWT_ALLOW_REFRESH': True,
+}
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

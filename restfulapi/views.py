@@ -13,13 +13,12 @@ from rest_framework.decorators import api_view
 from django.contrib.auth.models import User
 from django.contrib import auth
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
+from rest_framework.permissions import IsAuthenticated
 # @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 # def create_auth_token(sender, instance=None, created=False, **kwargs):
 #     if created:
@@ -29,6 +28,7 @@ from django.dispatch import receiver
 
 @api_view(["GET","POST" ,"PUT","PATCH", "DELETE"])
 def certification_api_view(request, pk=None):
+    permission_classes = [IsAuthenticated]
     if request.method == "GET":
         if pk==None:
             product = models.certification.objects.all()
@@ -94,6 +94,7 @@ class registerAPI(APIView):
         return Response({"status": "success","register":True}, status=status.HTTP_200_OK)
 
 class editprofileAPI(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self,request):
         username=request.session.get("username",'')
         if(username !=''):
@@ -125,7 +126,7 @@ class editprofileAPI(APIView):
         print(request.session.items())
         user_id=request.session.get("_auth_user_id",'')
         if user_id=='':
-            return Response({"infoㄅ":False}, status=status.HTTP_204_NO_CONTENT)
+            return Response({"info":False}, status=status.HTTP_204_NO_CONTENT)
         else:
             user_id=int(user_id)
         user=User.objects.get(id=user_id)

@@ -13,6 +13,8 @@ djangorestframework = "*"
 serializers = "*"
 coreapi = "*"
 pyyaml = "*"
+drf-jwt = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
