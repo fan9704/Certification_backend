@@ -2,6 +2,7 @@ import re
 from django.shortcuts import render
 import json
 # Create your views here.
+from django.contrib.sessions.models import Session
 from django.http import HttpResponse
 from restfulapi import models
 from restfulapi.serializers import CertificationSerializer,UserSerializer
@@ -94,29 +95,30 @@ class registerAPI(APIView):
         return Response({"status": "success","register":True}, status=status.HTTP_200_OK)
 
 class editprofileAPI(APIView):
-    permission_classes = [IsAuthenticated]
-    def post(self,request):
-        username=request.session.get("username",'')
+    #permission_classes = [IsAuthenticated]
+    def put(self,request):
+        sid = request.COOKIES['sessionid']
+        s = Session.objects.get(pk=sid)
+        s_info = 'Session ID: ' + sid + '\nExpire_date: ' + str(s.expire_date) + '\nData: ' + str(s.get_decoded())
+        print(s_info)
+        username=request.session.get("_auth_user_id",'')
         if(username !=''):
-            user=User.objects.get(username)
-            if request.data["password"]==user.password:
-                print(username,"---","login")
-                print("authenticate success!")
-                if request.data["password"]!="":
-                    password=request.data["password"]
-                    user.set_password=password
-                if request.data["first_name"]!="":
-                    first_name=request.data['first_name']
-                    user.first_name = first_name
-                if request.data["last_name"]!="":
-                    last_name=request.data["last_name"]
-                    user.last_name = last_name
-                if request.data["email"]!="":
-                    email=request.data["email"]
-                    user.email=email     
-                user.save()
-            else:
-                print("password incorrect")
+            user=User.objects.get(pk=username)
+            print(username,"---","login")
+            print("authenticate success!")
+            if request.data["password"]!="":
+                password=request.data["password"]
+                user.set_password=password
+            if request.data["first_name"]!="":
+                first_name=request.data['first_name']
+                user.first_name = first_name
+            if request.data["last_name"]!="":
+                last_name=request.data["last_name"]
+                user.last_name = last_name
+            if request.data["email"]!="":
+                email=request.data["email"]
+                user.email=email     
+            user.save()
             if user:
                 return Response({"status": "success","edit":True}, status=status.HTTP_200_OK)
         else:
@@ -135,32 +137,40 @@ class editprofileAPI(APIView):
         
 class loginAPI(APIView):
     def post(self, request, *args, **kwargs):
-        print(request.data)
-        print(request.session.items())
         if "_auth_user_id" in request.session:
-            print( request.session.get("_auth_user_id",''))
+            username=request.data.get("username","")
+            sid = request.COOKIES['sessionid']
+            s = Session.objects.get(pk=sid)
+            s_info = 'Session ID: ' + sid + '\nExpire_date: ' + str(s.expire_date) + '\nData: ' + str(s.get_decoded())
+            print(s_info)
+            request.COOKIES["User"]= request.data.get("username","")
+            request.session["username"]=request.data.get("username","")
+            print("Session",request.session.items(),"Cookie",request.COOKIES.items())
             print("has login")
-            print("user?",request)
+            return Response({"status": "success","login":True,"User":username}, status=status.HTTP_200_OK)
         else:
             try:
                 username=request.data.get("username",'')
                 password=request.data.get("password",'')
                 print("username",username,"password",password)
                 try:
+                    if(username =='' or password ==''):
+                        return Response({"status": "Failed","login":False,"error":"Account or Password cannot be empty"}, status=status.HTTP_200_OK)
                     user=auth.authenticate(username=username,password=password)
                 except:
                     user=None
-                if user :
+                    print("User: ",username,"Login Falied")
+                if user != None:
                         auth.login(request, user)
-                        request.session["login"]=True
                         request.session["username"]=username
-                        print(request.session.items())
-                        return Response({"status": "success","login":True}, status=status.HTTP_200_OK)
+                        request.COOKIES["User"]= request.data.get("username",'')
+                        print("Session",request.session.items(),"Cookie",request.COOKIES.items())
+                        return Response({"status": "success","login":True,"User":username}, status=status.HTTP_200_OK)
                 else:
-                    Response({"status": "success","login":False,"error":"Account or Password Error"}, status=status.HTTP_200_OK)
+                    print("User: ",username,"Login Falied")
+                    return Response({"status": "failed","login":False,"error":"Account or Password Error"}, status=status.HTTP_200_OK)
             except:
                 return Response({"status": "error","login":False,"error":"Account or Password Error"}, status=status.HTTP_200_OK)
-        return Response({"status": "success","login":True}, status=status.HTTP_200_OK)
             
     def get(self,request):
         user=request.user
@@ -174,4 +184,12 @@ class loginAPI(APIView):
             auth.logout(request)
             return Response({"status": "success","logout":True}, status=status.HTTP_200_OK)
         return Response({"status": "success","logout":False}, status=status.HTTP_200_OK)
+
+#TODO: Forget Password and send email
+class ForgetAPI(APIView):
+    def post(self,request):
+        email=request.data.get("email",'')
+        
+    def patch(self,request):
+        captcha=request.data.get("captcha",'')
 

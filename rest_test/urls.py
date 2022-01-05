@@ -22,6 +22,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework_simplejwt import views as jwt_views  
+from django.contrib.auth import views as view
 # ---product list
 router = DefaultRouter()
 router.register('', views.CertificationViewSet)
@@ -46,9 +47,10 @@ urlpatterns = [
     path('api/certifications/', include(router.urls)),
     path('api/accounts/login/', views.loginAPI.as_view()),
     path('api/accounts/logout/', views.loginAPI.as_view()),
+    # path('api/accounts/login/', view.LoginView.as_view()),
+    # path('api/accounts/logout/', view.LogoutView.as_view()),
     path('api/accounts/register/', views.registerAPI.as_view()),
-    path("api/accounts/edit/", views.editprofileAPI.as_view()),
-    path("api/accounts/get_profile/", views.editprofileAPI.as_view()),
+    path("api/accounts/profile/", views.editprofileAPI.as_view()),
     
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),     
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'), 

@@ -39,6 +39,10 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8000",
 ]
 CORS_ALLOWED_HEADERS=('*')
+CORS_ORIGIN_ALLOW_METHODS=('*')
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:8080',
+]
 # CORS_ALLOWED_HEADERS=default_headers+(
 #     'token',
 #     'userid'
@@ -49,7 +53,7 @@ if READ_DOT_ENV_FILE:
     # OS environment variables take precedence over variables from .env
     load_dotenv()
     os.getenv("DJANGO_READ_DOT_ENV_FILE",default=False)
-CORS_ORIGIN_ALLOW_METHODS=('*')
+
 # Application definition
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(
@@ -161,3 +165,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'static'
+LOGIN_REDIRECT_URL = "/"
