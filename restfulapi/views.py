@@ -1,6 +1,3 @@
-import re
-from django.shortcuts import render
-import json
 # Create your views here.
 from django.contrib.sessions.models import Session
 from django.http import HttpResponse
@@ -17,7 +14,6 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from django.conf import settings
-from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.permissions import IsAuthenticated
 import random
@@ -186,7 +182,10 @@ class loginAPI(APIView):
             return Response({"status": "success","logout":True}, status=status.HTTP_200_OK)
         return Response({"status": "success","logout":False}, status=status.HTTP_200_OK)
 
-#TODO: Forget Password and send email
+import smtplib
+import os
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 class ForgetAPI(APIView):
     def post(self,request):
         email=request.data.get("email",'')
@@ -199,6 +198,20 @@ class ForgetAPI(APIView):
         try:
             id=models.User.objects.get(email=email)
             models.captcha.objects.create(id=id,captcha=captcha)
+            content = MIMEMultipart()
+            content["subject"] = "[Certification Center]Reset Your Password" 
+            content["from"] = os.environ['SMTP_EMAIL'] 
+            content["to"] = email
+            content.attach(MIMEText("Please Receive The Following Captcha Code->: "+captcha))
+            with smtplib.SMTP(host="smtp.gmail.com", port="587") as smtp: 
+                try:
+                    smtp.ehlo()
+                    smtp.starttls()
+                    smtp.login(os.environ['SMTP_EMAIL'], os.environ['SMTP_KEY'])
+                    smtp.send_message(content)
+                    print("Complete!")
+                except Exception as e:
+                    print("Error message: ", e)
         except Exception as E:
             print(E)
             return Response({"status": "failed","send":False}, status=status.HTTP_200_OK)
@@ -208,4 +221,5 @@ class ForgetAPI(APIView):
     def patch(self,request):
         captcha=request.data.get("captcha",'')
         #authorize captcha
-
+    def get(self,request):
+        pass
