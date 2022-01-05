@@ -9,8 +9,7 @@ class certification(models.Model):
         return self.field_name
 
 class captcha(models.Model):
-    id=models.ForeignKey(User,on_delete=models.CASCADE,primary_key=True)
+    id=models.ForeignKey(User, db_column="email",on_delete=models.CASCADE,primary_key=True)
     captcha=models.CharField(max_length=50,blank=True,null=True)
     def __str__(self):
-        """String for representing the MyModelName object (in Admin site etc.)."""
         return self.field_name

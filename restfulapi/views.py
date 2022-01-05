@@ -20,6 +20,7 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.permissions import IsAuthenticated
+import random
 # @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 # def create_auth_token(sender, instance=None, created=False, **kwargs):
 #     if created:
@@ -189,7 +190,22 @@ class loginAPI(APIView):
 class ForgetAPI(APIView):
     def post(self,request):
         email=request.data.get("email",'')
-        
+        captcha=''
+        chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789'
+        length = len(chars) - 1
+        for i in range(8):
+            captcha+=str(chars[random.randint(0, length)])
+        print(captcha)
+        try:
+            id=models.User.objects.get(email=email)
+            models.captcha.objects.create(id=id,captcha=captcha)
+        except Exception as E:
+            print(E)
+            return Response({"status": "failed","send":False}, status=status.HTTP_200_OK)
+        return Response({"status": "success","send":True}, status=status.HTTP_200_OK)
+    def put(self,request):
+        pass #resend captcha
     def patch(self,request):
         captcha=request.data.get("captcha",'')
+        #authorize captcha
 
