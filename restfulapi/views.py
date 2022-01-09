@@ -2,7 +2,7 @@
 from django.contrib.sessions.models import Session
 from django.http import HttpResponse
 from restfulapi import models
-from restfulapi.serializers import CertificationSerializer,UserSerializer
+from restfulapi.serializers import CertificationSerializer,UserSerializer,MessageSerializer
 from rest_framework import viewsets,status,generics,mixins
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -73,13 +73,6 @@ def certification_api_view(request, pk=None):
 class CertificationViewSet(viewsets.ModelViewSet):
     queryset = models.certification.objects.all()
     serializer_class = CertificationSerializer
-
-
-class CertificationListCreateAPIView(generics.ListCreateAPIView):
-    queryset = models.certification.objects.all().order_by("id")
-    serializer_class = CertificationSerializer
-
-
 
 class registerAPI(APIView):
     def post(self, request):
@@ -172,13 +165,12 @@ class loginAPI(APIView):
     def get(self,request):
         user=request.user
         print(user)
-        print(request.session.items())
         if user:
-            print(user,"logout")
             if 'login' in request.session and 'username' in request.session:
                 del request.session['login']
                 del request.session['username']
             auth.logout(request)
+            print(request.session.items())
             return Response({"status": "success","logout":True}, status=status.HTTP_200_OK)
         return Response({"status": "success","logout":False}, status=status.HTTP_200_OK)
 
@@ -223,3 +215,12 @@ class ForgetAPI(APIView):
         #authorize captcha
     def get(self,request):
         pass
+
+class MessageViewSet(viewsets.ModelViewSet):
+    queryset = models.message.objects.all()
+    serializer_class = MessageSerializer
+class MessageAPI(APIView):
+    def get(self,request):
+        queryset=models.message.objects.all()
+        serializer = MessageSerializer(queryset)
+        return Response(serializer.data)

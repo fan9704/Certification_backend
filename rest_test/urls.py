@@ -26,7 +26,8 @@ from django.contrib.auth import views as view
 # ---product list
 router = DefaultRouter()
 router.register('', views.CertificationViewSet)
-app_name = 'Certification list'
+router2 = DefaultRouter()
+router2.register('', views.MessageViewSet)
 # ---
 schema_view = get_schema_view(
     openapi.Info(
@@ -43,16 +44,14 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('api/admin/', admin.site.urls),
-    path("api/certification/", views.certification_api_view, name="certification"),
+    # path("api/certification/", views.certification_api_view, name="certification"),
     path('api/certifications/', include(router.urls)),
     path('api/accounts/login/', views.loginAPI.as_view()),
     path('api/accounts/logout/', views.loginAPI.as_view()),
-    # path('api/accounts/login/', view.LoginView.as_view()),
-    # path('api/accounts/logout/', view.LogoutView.as_view()),
     path('api/accounts/register/', views.registerAPI.as_view()),
     path("api/accounts/profile/", views.editprofileAPI.as_view()),
     path("api/accounts/forget/",views.ForgetAPI.as_view()),
-
+    path("api/message/",include(router2.urls)),
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),     
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'), 
 

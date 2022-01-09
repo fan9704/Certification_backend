@@ -34,3 +34,9 @@ class UserSerializer(serializers.ModelSerializer):
     
     def getByname(self,name):
         return get_user_model().objects.get(username=name)
+
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.message
+        fields = ('id', 'message','user','time')
+        read_only_fields = ('id',)
