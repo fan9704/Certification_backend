@@ -128,15 +128,15 @@ class editprofileAPI(APIView):
 class loginAPI(APIView):
     def post(self, request, *args, **kwargs):
         if "_auth_user_id" in request.session:
-            username=request.data.get("username","")
             sid = request.COOKIES['sessionid']
             s = Session.objects.get(pk=sid)
             s_info = 'Session ID: ' + sid + '\nExpire_date: ' + str(s.expire_date) + '\nData: ' + str(s.get_decoded())
             print(s_info)
-            request.COOKIES["User"]= request.data.get("username","")
-            request.session["username"]=request.data.get("username","")
+            #print(request.session['_auth_user_id'])
+            user=User.objects.get(id=request.session['_auth_user_id'])
+            username=user.username
             print("Session",request.session.items(),"Cookie",request.COOKIES.items())
-            print("has login")
+            print(username,"has login")
             return Response({"status": "success","login":True,"User":username}, status=status.HTTP_200_OK)
         else:
             try:
@@ -152,9 +152,12 @@ class loginAPI(APIView):
                     print("User: ",username,"Login Falied")
                 if user != None:
                         auth.login(request, user)
-                        request.session["username"]=username
-                        request.COOKIES["User"]= request.data.get("username",'')
-                        print("Session",request.session.items(),"Cookie",request.COOKIES.items())
+                        save=request.data.get('save',False)
+                        print(save)
+                        if save :
+                            request.session["username"]=username
+                            request.COOKIES["User"]= request.data.get("username",'')
+                            print("Session",request.session.items(),"Cookie",request.COOKIES.items())
                         return Response({"status": "success","login":True,"User":username}, status=status.HTTP_200_OK)
                 else:
                     print("User: ",username,"Login Falied")
