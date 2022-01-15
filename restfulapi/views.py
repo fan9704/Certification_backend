@@ -1,4 +1,6 @@
 # Create your views here.
+from operator import imod
+from tkinter.tix import Tree
 from django.contrib.sessions.models import Session
 from django.http import HttpResponse
 from restfulapi import models
@@ -17,6 +19,7 @@ from django.conf import settings
 from django.dispatch import receiver
 from rest_framework.permissions import IsAuthenticated
 import random
+
 # @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 # def create_auth_token(sender, instance=None, created=False, **kwargs):
 #     if created:
@@ -222,8 +225,17 @@ class ForgetAPI(APIView):
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = models.message.objects.all()
     serializer_class = MessageSerializer
+
+import datetime
 class MessageAPI(APIView):
     def get(self,request):
         queryset=models.message.objects.all()
-        serializer = MessageSerializer(queryset)
+        serializer = MessageSerializer(instance=queryset,many=True)
         return Response(serializer.data)
+    def post(self,request):
+        username=request.data.get('user','')
+        msg=request.data.get('message','')
+        user=models.User.objects.get(username=username)
+        #print(datetime.datetime.today())
+        models.message.objects.create(message=msg,username=user,time=datetime.datetime.today())
+        return Response({"status": "success","send":True}, status=status.HTTP_200_OK)

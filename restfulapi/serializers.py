@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from restfulapi import models
+from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.contrib import auth
 class CertificationSerializer(serializers.ModelSerializer):
@@ -36,7 +37,10 @@ class UserSerializer(serializers.ModelSerializer):
         return get_user_model().objects.get(username=name)
 
 class MessageSerializer(serializers.ModelSerializer):
+    message=serializers.CharField()
+    # username=UserSerializer()
+    time=serializers.TimeField()
     class Meta:
         model = models.message
-        fields = ('id', 'message','user','time')
+        fields = ('id', 'message','username','time')
         read_only_fields = ('id',)

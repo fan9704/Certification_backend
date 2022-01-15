@@ -17,7 +17,7 @@ class captcha(models.Model):
 
 class message(models.Model):
     message=models.CharField(max_length=255,blank=True,null=True)
-    user=models.ForeignKey(User, db_column="username",on_delete=models.CASCADE)
-    time=models.TimeField(default=now() )
+    username=models.ForeignKey(User, db_column="username",on_delete=models.CASCADE)
+    time=models.DateTimeField(default=now() )
     def __str__(self):
         return self.message
