@@ -39,7 +39,7 @@ class UserSerializer(serializers.ModelSerializer):
 class MessageSerializer(serializers.ModelSerializer):
     message=serializers.CharField()
     # username=UserSerializer()
-    time=serializers.TimeField()
+    time=serializers.DateTimeField()
     class Meta:
         model = models.message
         fields = ('id', 'message','username','time')

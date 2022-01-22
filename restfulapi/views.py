@@ -195,7 +195,9 @@ class ForgetAPI(APIView):
         print(captcha)
         try:
             id=models.User.objects.get(email=email)
-            models.captcha.objects.create(id=id,captcha=captcha)
+            user_captcha=models.captcha.objects.get_or_create(id=id)
+            user_captcha[0].captcha=captcha
+            user_captcha[0].save()
             content = MIMEMultipart()
             content["subject"] = "[Certification Center]Reset Your Password" 
             content["from"] = os.environ['SMTP_EMAIL'] 
