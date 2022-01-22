@@ -1,22 +1,33 @@
-# Product Backend
+# Certification Backend
+### Powered By Django 4
 ### Use Django Rest Framework
 
 ----
 
 ### install dependencies
+all dependencies are involve in pipfile
 ```bash=
-pip install django_rest_framework
-pip install serializers
-pip install corsheader
-pip install rest_framework.authtoken
-pip install drf_yasg
+pipenv install
 
 ```
+----
+
+### Create .env file in project root
+SECRET_KEY = "Your Project Secret"
+JWT_EXPIRATION_DELTA_SECONDS = "Your EXPIRATION"
+DJANGO_READ_DOT_ENV_FILE = "Read OR NOT"
+SMTP_EMAIL="SMTP email"
+SMTP_KEY="SMTP KEY"
 
 ----
 
 ### Server Run
 
 ```bash
-python manage.py runserver
+pipenv run python manage.py runserver
 ```
+
+----
+
+### In development
+Image Converter (Use OpenCV2 Convert Image)
