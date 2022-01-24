@@ -1,3 +1,10 @@
-.env
+
+# local env files
+.env.local
+.env.*.local
+
 chromedrive.exe
+
+# Editor directories and files
 main.py
+.vscode
