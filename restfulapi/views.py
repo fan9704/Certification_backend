@@ -1,8 +1,6 @@
 # Create your views here.
-from operator import imod
 from tkinter.tix import Tree
 from django.contrib.sessions.models import Session
-from django.http import HttpResponse
 from restfulapi import models
 from restfulapi.serializers import CertificationSerializer,UserSerializer,MessageSerializer
 from rest_framework import viewsets,status,generics,mixins
@@ -135,7 +133,6 @@ class loginAPI(APIView):
             s = Session.objects.get(pk=sid)
             s_info = 'Session ID: ' + sid + '\nExpire_date: ' + str(s.expire_date) + '\nData: ' + str(s.get_decoded())
             print(s_info)
-            #print(request.session['_auth_user_id'])
             user=User.objects.get(id=request.session['_auth_user_id'])
             username=user.username
             print("Session",request.session.items(),"Cookie",request.COOKIES.items())
@@ -159,7 +156,7 @@ class loginAPI(APIView):
                         print(save)
                         if save :
                             request.session["username"]=username
-                            request.COOKIES["User"]= request.data.get("username",'')
+                            # request.COOKIES["User"]= request.data.get("username",'')
                             print("Session",request.session.items(),"Cookie",request.COOKIES.items())
                         return Response({"status": "success","login":True,"User":username}, status=status.HTTP_200_OK)
                 else:
@@ -169,7 +166,7 @@ class loginAPI(APIView):
                 return Response({"status": "error","login":False,"error":"Account or Password Error"}, status=status.HTTP_200_OK)
             
     def get(self,request):
-        user=request.user
+        user=request.user.username
         print(user)
         if user:
             if 'login' in request.session and 'username' in request.session:

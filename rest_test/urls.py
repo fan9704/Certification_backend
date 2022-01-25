@@ -23,6 +23,7 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework_simplejwt import views as jwt_views  
 from django.contrib.auth import views as view
+from restfulapi import file
 # ---product list
 router = DefaultRouter()
 router.register('', views.CertificationViewSet)
@@ -48,7 +49,8 @@ urlpatterns = [
     path('api/accounts/register/', views.registerAPI.as_view()),
     path("api/accounts/profile/", views.editprofileAPI.as_view()),
     path("api/accounts/forget/",views.ForgetAPI.as_view()),
-   
+    
+    path("api/file/",file.FileAPI.as_view()),
     # path("api/photo/convert/",),
     path("api/message/",views.MessageAPI.as_view()),
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),     
