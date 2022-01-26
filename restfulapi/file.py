@@ -50,8 +50,8 @@ class FileAPI(APIView):
         result = {}
         try:
             files = request.FILES
-            print(files)
-            file = files.get('file')
+            file = files.get('photo')
+            print(files,"---",file)
             if not file:
                 result['msg'] =  '上傳失敗，未獲取到檔案'
                 result['success'] =  False
@@ -63,10 +63,11 @@ class FileAPI(APIView):
             time_str = create_time.strftime('%Y%m%d')
             name, suffix = os.path.splitext(file_name)
             file_name = str(uuid.uuid1()).replace('-', '') + time_str + suffix
-            file_relative_path = '/myapp/attachments/'+ time_str
-            file_absolute_path = settings.MEDIA_ROOT + file_relative_path
+            file_relative_path = "\\attachments\\"+ time_str
+            file_absolute_path = str(settings.MEDIA_ROOT) + str(file_relative_path)
+            print(file_absolute_path)
             if not os.path.exists(file_absolute_path):# 路徑不存在
-                    if not mkdirs_in_batch(file_absolute_path):
+                if not mkdirs_in_batch(file_absolute_path):
                         result['msg'] =  '批量創建路徑(%s)對應的目錄失敗' % file_absolute_path
                         result['success'] =  False
                         return Response(result, status.HTTP_500_INTERNAL_SERVER_ERROR)
