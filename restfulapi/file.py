@@ -6,8 +6,9 @@ from django.utils import timezone
 from rest_framework import status
 from django.conf import settings
 import uuid
-
+from django.http import HttpResponse, HttpResponseNotFound
 import logging
+from django.http import FileResponse
 logger = logging.getLogger('mylogger')
 # 批量創建目錄
 def mkdirs_in_batch(path):
@@ -87,3 +88,21 @@ class FileAPI(APIView):
                 result['msg'] =  '%s' % e
                 result['success'] =  False
                 return Response(result, status.HTTP_500_INTERNAL_SERVER_ERROR)
+    async def get(self,request):
+        print("Session",request.session.items(),"\nCookie",request.COOKIES.items())
+        file_name=request.COOKIES.get("filename",'')
+        print(file_name)
+        create_time = timezone.now()
+        time_str = create_time.strftime('%Y%m%d')
+        file_location =str(settings.MEDIA_ROOT) + "\\attachments\\"+ time_str+"\\"+ file_name
+        print(file_location)
+        try:    
+            with open(file_location, 'rb') as f:
+                file_data = f.read()
+                # sending response 
+                response= HttpResponse(file_data,content_type='application/force-download')
+                response['Content-Disposition'] = 'attachment; filename="{0}"'.format(file_name)
+                return response
+        except IOError:
+            # handle file not exist case here
+            return Response({"error":"File not found"},status.HTTP_400_BAD_REQUEST)
