@@ -36,6 +36,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
     "http://127.0.0.1:8000",
+    "http://140.125.207.230e    :8000",
+    "http://www.server-fan9704.eu.org"
 ]
 CORS_ALLOWED_HEADERS = "*"
 CORS_ORIGIN_ALLOW_METHODS = "*"

@@ -1,5 +1,4 @@
 # Create your views here.
-from tkinter.tix import Tree
 from django.contrib.sessions.models import Session
 from restfulapi import models
 from restfulapi.serializers import CertificationSerializer,UserSerializer,MessageSerializer
