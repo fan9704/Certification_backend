@@ -15,6 +15,7 @@ coreapi = "*"
 pyyaml = "*"
 drf-jwt = "*"
 python-dotenv = "*"
+channels = "*"
 
 [dev-packages]
 

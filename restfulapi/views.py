@@ -169,9 +169,10 @@ class loginAPI(APIView):
         user=request.user.username
         print(user)
         if user:
-            if 'login' in request.session and 'username' in request.session:
+            if 'login' in request.session or '_auth_user_backend' in request.session or '_auth_user_id' in request.session:
                 del request.session['login']
-                del request.session['username']
+                del request.session['_auth_user_backend']
+                del request.session['_auth_user_id']
             auth.logout(request)
             print(request.session.items())
             return Response({"status": "success","logout":True}, status=status.HTTP_200_OK)

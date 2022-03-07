@@ -82,13 +82,14 @@ class FileAPI(APIView):
                 file_handler.close()
             result['msg'] =  '上傳成功'
             result['success'] =  True
+            result['filename']=file_name
             return Response(result, status.HTTP_200_OK)
 
         except Exception as e:
                 result['msg'] =  '%s' % e
                 result['success'] =  False
                 return Response(result, status.HTTP_500_INTERNAL_SERVER_ERROR)
-    async def get(self,request):
+    def get(self,request):
         print("Session",request.session.items(),"\nCookie",request.COOKIES.items())
         file_name=request.COOKIES.get("filename",'')
         print(file_name)
