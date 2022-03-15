@@ -115,7 +115,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "rest_test.wsgi.application"
-
+ASGI_APPLICATION = "rest_test.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases

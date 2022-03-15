@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 jinja2 = "*"
-django = "*"
+django = "4.0"
 django-cors-headers = "*"
 drf-yasg = "*"
 djangorestframework-simplejwt = "*"
@@ -16,6 +16,7 @@ pyyaml = "*"
 drf-jwt = "*"
 python-dotenv = "*"
 channels = "*"
+daphne = "*"
 
 [dev-packages]
 
