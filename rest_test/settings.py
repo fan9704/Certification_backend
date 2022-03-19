@@ -128,6 +128,19 @@ DATABASES = {
 }
 
 
+CHANNEL_LAYERS = {
+      'default': {
+          'BACKEND': 'channels_redis.core.RedisChannelLayer',
+          'CONFIG': {
+              'hosts': [
+            ('localhost', 6379),     #可以配置多個通道層。然而，大多數專案將只使用一個“預設”通道層。
+              #如果你是使用Docker安裝執行redis的請註釋下面的配置
+            ('redis_server_name', 6379),
+              #如果你是使用Daphne執行的請註釋掉localhost那一行配置
+        ],
+          },
+      },
+  }
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
